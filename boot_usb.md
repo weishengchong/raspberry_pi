@@ -14,4 +14,5 @@ remove SDCARD
 sudo reboot 
 
 Backup USB image
-sudo dd if=/dev/sdd of=usb.img status=progress bs=4M
+  sudo fdisk -l
+  sudo dd if=/dev/sdd of=usb.img status=progress bs=4M
