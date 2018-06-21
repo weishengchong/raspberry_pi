@@ -1,0 +1,28 @@
+https://unix.stackexchange.com/questions/188487/cpulimit-on-a-bash-script-which-runs-other-commands/225101#225101
+1) Install cgroup-bin
+
+sudo apt-get install cgroup-bin
+
+2) Reboot. cgroups is now located at /sys/fs/cgroup
+
+3) Make a cgroup for your user (the owner of the process)
+
+# Change $USER to the system user running your process.
+sudo cgcreate -a $USER -g memory,cpu:$USER
+
+4) Your user can them manage resources. By default users get 1024 cpu units (shares), so to limit to about 10 % cpu , memory is in bytes ...
+
+# About 10 % cpu
+echo 100 > /cgroup/cpu/$USER/cpu.shares
+
+# 10 Mb
+echo 10000000 > /cgroup/memory/$USER/memory.limit_in_bytes
+
+5) Start your process (change exec to cgexec)
+
+# -g specifies the control group to run the process in
+# Limit cpu
+cgexec -g cpu:$USER command <options> &
+
+# Limit cpu and memory
+cgexec -g memory,cpu:$USER command <options> &
